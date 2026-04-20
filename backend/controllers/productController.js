@@ -2,8 +2,9 @@ const { validationResult } = require('express-validator');
 const Product = require('../models/product');
 const { Op } = require('sequelize');
 const { sequelize } = require('../config/database');
+
 const productController = {
-  // Get all products with filters
+  // Get all products with filters - MEJORADO CON ORDENAMIENTO POR SKU NUMÉRICO
   async getAllProducts(req, res) {
     try {
       const { search, category, page = 1, limit = 10 } = req.query;
@@ -22,16 +23,28 @@ const productController = {
       }
 
       const offset = (page - 1) * limit;
-      const { count, rows } = await Product.findAndCountAll({
+      
+      // ✅ MEJORADO: Obtener todos los productos que coincidan con los filtros
+      const allProducts = await Product.findAll({
         where,
-        limit: parseInt(limit),
-        offset: parseInt(offset),
-        order: [['fecha_creacion', 'DESC']]
+        raw: true,
+        subQuery: false
       });
+
+      // ✅ ORDENAR POR SKU NUMÉRICO (P001, P002, P003... en lugar de P001, P010, P011...)
+      const sortedProducts = allProducts.sort((a, b) => {
+        const numA = parseInt(a.sku.replace(/\D/g, '')) || 0;
+        const numB = parseInt(b.sku.replace(/\D/g, '')) || 0;
+        return numA - numB;
+      });
+
+      // ✅ Aplicar paginación DESPUÉS del ordenamiento
+      const paginatedProducts = sortedProducts.slice(offset, offset + parseInt(limit));
+      const count = sortedProducts.length;
 
       res.json({
         success: true,
-        data: rows,
+        data: paginatedProducts,
         pagination: {
           total: count,
           page: parseInt(page),

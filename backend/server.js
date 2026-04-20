@@ -4,6 +4,7 @@ require('dotenv').config();
 
 const { sequelize, testConnection } = require('./config/database');
 const productRoutes = require('./routes/products');
+const reportRoutes = require('./routes/reports'); // ✅ IMPORTANTE
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -22,7 +23,8 @@ app.get('/', (req, res) => {
   res.json({
     message: '🚀 API funcionando correctamente',
     endpoints: {
-      products: '/api/products'
+      products: '/api/products',
+      reports: '/api/reports' // opcional, solo informativo
     }
   });
 });
@@ -31,6 +33,7 @@ app.get('/', (req, res) => {
    ROUTES
 ======================== */
 app.use('/api', productRoutes);
+app.use('/api/reports', reportRoutes); // 🔥 ESTA LÍNEA ES LA CLAVE
 
 /* ========================
    ERROR HANDLER

@@ -15,11 +15,10 @@ router.post('/operational', async (req, res) => {
       `attachment; filename=reporte_operacional_${Date.now()}.pdf`
     );
 
-    return res.send(pdfBuffer);
+    res.send(pdfBuffer);
   } catch (error) {
     console.error('Error generating operational report:', error);
-
-    return res.status(500).json({
+    res.status(500).json({
       success: false,
       message: 'Error generating report',
       error: error.message
@@ -38,16 +37,20 @@ router.post('/management', async (req, res) => {
       `attachment; filename=reporte_gestion_${Date.now()}.pdf`
     );
 
-    return res.send(pdfBuffer);
+    res.send(pdfBuffer);
   } catch (error) {
     console.error('Error generating management report:', error);
-
-    return res.status(500).json({
+    res.status(500).json({
       success: false,
       message: 'Error generating report',
       error: error.message
     });
   }
+});
+
+// 🧪 Ruta de prueba
+router.get('/test', (req, res) => {
+  res.send('REPORTS OK');
 });
 
 module.exports = router;
