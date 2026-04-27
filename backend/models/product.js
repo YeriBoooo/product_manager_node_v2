@@ -81,6 +81,17 @@ const Product = sequelize.define('Product', {
       notEmpty: { msg: 'Supplier is required' }
     }
   },
+
+    imagen: {
+      type: DataTypes.TEXT,
+      allowNull: true
+    },
+
+    activo: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: true
+    },
+
   fecha_creacion: {
     type: DataTypes.DATE,
     defaultValue: DataTypes.NOW
